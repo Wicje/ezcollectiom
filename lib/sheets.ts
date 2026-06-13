@@ -8,7 +8,7 @@ import Papa from 'papaparse';
 // 2. Add columns exactly named: id, name, category, description, base_price, variants, main_images, stock, featured, rating
 // 3. Go to File > Share > Publish to web. Choose "Entire Document" or your specific tab, and "Comma-separated values (.csv)".
 // 4. Copy the link and paste it here:
-const SHEET_CSV_URL = process.env.NEXT_PUBLIC_SHEET_CSV_URL || "YOUR_PUBLISHED_GOOGLE_SHEET_CSV_URL_HERE"; 
+const SHEET_CSV_URL = process.env.NEXT_PUBLIC_SHEET_CSV_URL || "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_Fgjz2hkkwxyBmuzkG90bajGvKbbOPNAsUHMpz5M3f1GuB4JSYa-jl6xk7pZUEKXJkxjW0d8BzHO1/pub?gid=0&single=true&output=csv"; 
 // Example dummy data link used above. In a real app, replace with your published CSV link.
 // For now, if the sheet fails to load, we will fallback to dummy data.
 
@@ -32,8 +32,8 @@ export interface Product {
   rating: number;
 }
 
-const CACHE_KEY = "sheet_ecommerce_data";
-const CACHE_EXPIRY_KEY = "sheet_ecommerce_data_expiry";
+const CACHE_KEY = "sheet_ecommerce_data_v2";
+const CACHE_EXPIRY_KEY = "sheet_ecommerce_data_expiry_v2";
 const CACHE_DURATION_MS = 50 * 60 * 1000; // 50 minutes
 
 // Dummy data fallback
@@ -138,14 +138,34 @@ export async function fetchProducts(): Promise<Product[]> {
     const products: Product[] = parsed.data.map((row: any) => {
       let variants: ProductVariant[] = [];
       try {
-        if (row.variants) variants = JSON.parse(row.variants);
+        if (row.variants) {
+          variants = JSON.parse(row.variants);
+          variants = variants.map(v => {
+            if (v.images) {
+              v.images = v.images.map(u => {
+                if (u.includes('unsplash.com/photos/')) {
+                  return "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=800&auto=format&fit=crop";
+                }
+                return u;
+              });
+            }
+            return v;
+          });
+        }
       } catch (e) {
         console.warn(`Failed to parse variants for product ${row.id}`);
       }
 
       let main_images: string[] = [];
       if (row.main_images) {
-        main_images = row.main_images.split(',').map((u: string) => u.trim()).filter(Boolean);
+        main_images = row.main_images.split(',').map((u: string) => {
+          let url = u.trim();
+          // Fix unsplash HTML page links which crash Next.js image optimization
+          if (url.includes('unsplash.com/photos/')) {
+             return "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=800&auto=format&fit=crop";
+          }
+          return url;
+        }).filter(Boolean);
       } else {
         // Fallback placeholders
         main_images = ["https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=800&auto=format&fit=crop"];

@@ -91,7 +91,7 @@ export default function CheckoutPage() {
       clearCart();
 
       // 5. Redirect to WhatsApp
-      const MY_WHATSAPP_NUMBER = "2340000000000"; // USER: Replace with your phone number (with country code)
+      const MY_WHATSAPP_NUMBER = "2347053245286"; // USER: Replace with your phone number (with country code)
       const waMessage = `Hello Zinnes!%0A%0AHere is my order: ${orderId}%0A%0A*Items:*%0A${itemsListStr}%0A%0A*Total:* ${total.toLocaleString()} $%0A%0A*Customer Info:*%0AName: ${formData.fullName}%0AEmail: ${formData.email}%0APhone: ${formData.phone}%0AAddress: ${formData.address}, ${formData.state}%0ANote: ${formData.note || 'None'}`;
       
       const waLink = `https://wa.me/${MY_WHATSAPP_NUMBER}?text=${waMessage}`;
