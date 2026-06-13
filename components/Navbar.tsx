@@ -44,8 +44,8 @@ export default function Navbar() {
         {/* Center Logo */}
         <div className="flex-1 md:flex-none flex justify-center md:absolute md:left-1/2 md:-translate-x-1/2">
           <Link href="/" className="font-medium text-2xl tracking-widest uppercase hover:opacity-80 transition-opacity flex items-center gap-2">
-            <div className="w-8 h-8 bg-black rounded-full text-white flex items-center justify-center text-sm font-semibold tracking-normal">G</div>
-            GLINT
+            <div className="w-8 h-8 bg-black rounded-full text-white flex items-center justify-center text-sm font-semibold tracking-normal">Z</div>
+            ZINNES
           </Link>
         </div>
 
