@@ -1,0 +1,6 @@
+{
+  "name": "Zinnes",
+  "description": "High fashion e-commerce storefront for bags and accessories.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
